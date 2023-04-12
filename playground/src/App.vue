@@ -5,6 +5,7 @@ import { DefineTemplate, ReuseTemplate, createReusableTemplate } from '../../src
 const greeting = ref('Hello')
 
 const [DefineFoo, ReuseFoo] = createReusableTemplate<{ msg: string }>()
+const TemplateBar = createReusableTemplate<{ msg: string }>()
 </script>
 
 <template>
@@ -24,6 +25,11 @@ const [DefineFoo, ReuseFoo] = createReusableTemplate<{ msg: string }>()
     <div>Foo: {{ greeting }} {{ msg }}</div>
   </DefineFoo>
   <ReuseFoo msg="world" />
+
+  <TemplateBar.define v-slot="{ msg }">
+    <div>Bar: {{ greeting }} {{ msg }}</div>
+  </TemplateBar.define>
+  <TemplateBar.reuse msg="world" />
 
   <button @click="greeting = greeting === 'Hi' ? 'Hello' : 'Hi'">
     Change greeting

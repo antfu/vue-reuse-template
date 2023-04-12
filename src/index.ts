@@ -66,17 +66,53 @@ export function createReusableTemplate<T extends object>() {
       reg.set(key, slots.default)
       return null
     }
-  })
-  const reuse = defineComponent((_, { attrs }) => {
-    const reg = getTemplateRegistry()
-    return () => {
-      const render = reg.get(key)
-      if (!render)
-        throw new Error('Reusable template is not defined')
-      return renderSlot({ default: render }, 'default', attrs)
-    }
-  })
+  }) as DefineTemplateComponent<T>
 
-  // TODO: support array and object
-  return [define, reuse] as [DefineTemplateComponent<T>, ReuseTemplateComponent<T>]
+  const reuse = defineComponent({
+    inheritAttrs: false,
+    setup(_, { attrs }) {
+      const reg = getTemplateRegistry()
+      return () => {
+        const render = reg.get(key)
+        if (!render)
+          throw new Error('Reusable template is not defined')
+        return renderSlot({ default: render }, 'default', attrs)
+      }
+    },
+  }) as ReuseTemplateComponent<T>
+
+  return makeDestructurable(
+    { define, reuse },
+    [define, reuse] as const,
+  )
+}
+
+/**
+ * @see What the hack? https://antfu.me/posts/destructuring-with-object-or-array
+ */
+function makeDestructurable<
+  T extends Record<string, unknown>,
+  A extends readonly any[],
+>(obj: T, arr: A): T & A {
+  if (typeof Symbol !== 'undefined') {
+    const clone = { ...obj }
+
+    Object.defineProperty(clone, Symbol.iterator, {
+      enumerable: false,
+      value() {
+        let index = 0
+        return {
+          next: () => ({
+            value: arr[index++],
+            done: index > arr.length,
+          }),
+        }
+      },
+    })
+
+    return clone as T & A
+  }
+  else {
+    return Object.assign([...arr], obj) as unknown as T & A
+  }
 }

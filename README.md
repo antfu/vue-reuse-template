@@ -111,6 +111,26 @@ const [DefineBar, ReuseBar] = createReusableTemplate<{ items: string[] }>()
 </template>
 ```
 
+Optionally, if you are not a fan of array destructuring, the following usage is also legal:
+
+```html
+<script setup>
+import { createReusableTemplate } from 'vue-reuse-template'
+
+const TemplateFoo = createReusableTemplate<{ msg: string }>()
+</script>
+
+<template>
+  <!-- With `createReusableTemplate` you don't need to set `name` -->
+  <TemplateFoo.define v-slot="{ msg }">
+    <!-- `msg` is typed as `string` -->
+    <div>Hello {{ msg.toUpperCase() }}</div>
+  </TemplateFoo.define>
+
+  <TemplateFoo.reuse msg="World" />
+</template>
+```
+
 ## References
 
 Existing Vue discussions/issues about reusing template:
