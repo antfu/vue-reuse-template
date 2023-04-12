@@ -9,6 +9,8 @@ export type ReuseTemplateComponent<T> = DefineComponent<T>
 
 const _map = new WeakMap<ComponentInternalInstance, Map<string | symbol, Slot | undefined>>()
 function getTemplateRegistry() {
+  // store the render registry with a WeakMap
+  // bound to the parent component instance (the one that uses the template)
   const instance = getCurrentInstance()!.parent!
   if (!_map.has(instance))
     _map.set(instance, new Map())
@@ -25,8 +27,8 @@ export const DefineTemplate = defineComponent({
   setup(props, { slots }) {
     const reg = getTemplateRegistry()
     return () => {
+      // register the render function
       reg.set(props.name, slots.default)
-      return null
     }
   },
 })
@@ -42,9 +44,10 @@ export const ReuseTemplate = defineComponent({
   setup(props, { attrs }) {
     const reg = getTemplateRegistry()
     return () => {
+      // get the render function from DefineTemplate
       const render = reg.get(props.name)
-      if (!render)
-        throw new Error(`Reusable template "${props.name}" is not found, did you define it with <DefineTemplate name="${props.name}">?`)
+      if (!render && process.env.NODE_ENV !== 'production')
+        throw new Error(`[vue-reuse-template] Reusable template "${props.name}" is not defined, have you used <DefineTemplate name="${props.name}">?`)
       return renderSlot({ default: render }, 'default', attrs)
     }
   },
@@ -64,7 +67,6 @@ export function createReusableTemplate<T extends object>() {
     const reg = getTemplateRegistry()
     return () => {
       reg.set(key, slots.default)
-      return null
     }
   }) as DefineTemplateComponent<T>
 
@@ -74,8 +76,8 @@ export function createReusableTemplate<T extends object>() {
       const reg = getTemplateRegistry()
       return () => {
         const render = reg.get(key)
-        if (!render)
-          throw new Error('Reusable template is not defined')
+        if (!render && process.env.NODE_ENV !== 'production')
+          throw new Error('[vue-reuse-template] Reusable template is not defined')
         return renderSlot({ default: render }, 'default', attrs)
       }
     },
@@ -94,25 +96,18 @@ function makeDestructurable<
   T extends Record<string, unknown>,
   A extends readonly any[],
 >(obj: T, arr: A): T & A {
-  if (typeof Symbol !== 'undefined') {
-    const clone = { ...obj }
-
-    Object.defineProperty(clone, Symbol.iterator, {
-      enumerable: false,
-      value() {
-        let index = 0
-        return {
-          next: () => ({
-            value: arr[index++],
-            done: index > arr.length,
-          }),
-        }
-      },
-    })
-
-    return clone as T & A
-  }
-  else {
-    return Object.assign([...arr], obj) as unknown as T & A
-  }
+  const clone = { ...obj }
+  Object.defineProperty(clone, Symbol.iterator, {
+    enumerable: false,
+    value() {
+      let index = 0
+      return {
+        next: () => ({
+          value: arr[index++],
+          done: index > arr.length,
+        }),
+      }
+    },
+  })
+  return clone as T & A
 }

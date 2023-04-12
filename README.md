@@ -133,6 +133,10 @@ const TemplateFoo = createReusableTemplate<{ msg: string }>()
 </template>
 ```
 
+## Performance
+
+This library has very little overhead. You don't usually need to worry about the performance impact.
+
 ## References
 
 Existing Vue discussions/issues about reusing template:
