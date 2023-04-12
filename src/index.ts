@@ -44,7 +44,7 @@ export const ReuseTemplate = defineComponent({
     return () => {
       const render = reg.get(props.name)
       if (!render)
-        throw new Error(`Reusable template "${props.name}" is not found, having you defined it with <DefineTemplate name="${props.name}">?`)
+        throw new Error(`Reusable template "${props.name}" is not found, did you define it with <DefineTemplate name="${props.name}">?`)
       return renderSlot({ default: render }, 'default', attrs)
     }
   },
