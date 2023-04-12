@@ -104,6 +104,7 @@ import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
 
   <ReuseTemplate name="foo" :data="data" msg="The first usage" />
   <ReuseTemplate name="foo" :data="anotherData" msg="The second usage" />
+  <ReuseTemplate name="foo" v-bind="{ data: something, msg: 'The third' }" />
 </template>
 ```
 
@@ -156,9 +157,35 @@ const TemplateFoo = createReusableTemplate<{ msg: string }>()
 </template>
 ```
 
+### Passing Slots
+
+It's also possible to pass slots back from `<ReuseTemplate>`. You can access the slots on `<DefineTemplate>` from `$slots`:
+
+```html
+<script setup>
+import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
+</script>
+
+<template>
+  <DefineTemplate v-slot="{ $slots, otherProp }">
+    <div some-layout>
+      <!-- To render the slot -->
+      <component :is="$slots.default" />
+    </div>
+  </DefineTemplate>
+
+  <ReuseTemplate>
+    <div>Some content</div>
+  </ReuseTemplate>
+  <ReuseTemplate>
+    <div>Another content</div>
+  </ReuseTemplate>
+</template>
+```
+
 ## Performance
 
-This library has very little overhead. You don't usually need to worry about the performance impact.
+This library has very little overhead. You don't normally need to worry about its performance impact.
 
 ## References
 

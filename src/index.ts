@@ -1,11 +1,20 @@
 import type { ComponentInternalInstance, DefineComponent, Slot } from 'vue'
 import { defineComponent, getCurrentInstance, renderSlot } from 'vue'
 
-export type DefineTemplateComponent<T> = DefineComponent<{}> & {
-  new(): { $slots: { default(_: T): any } }
+export type DefineTemplateComponent<
+ Bindings extends object,
+ Slots extends Record<string, Slot | undefined>,
+ Props = {},
+> = DefineComponent<Props> & {
+  new(): { $slots: { default(_: Bindings & { $slots: Slots }): any } }
 }
 
-export type ReuseTemplateComponent<T> = DefineComponent<T>
+export type ReuseTemplateComponent<
+  Bindings extends object,
+  Slots extends Record<string, Slot | undefined>,
+> = DefineComponent<Bindings> & {
+  new(): { $slots: Slots }
+}
 
 const _map = new WeakMap<ComponentInternalInstance, Map<string | symbol, Slot | undefined>>()
 function getTemplateRegistry() {
@@ -31,7 +40,7 @@ export const DefineTemplate = defineComponent({
       reg.set(props.name, slots.default)
     }
   },
-})
+}) as DefineTemplateComponent<any, Record<string, Slot | undefined>, { name?: string }>
 
 export const ReuseTemplate = defineComponent({
   inheritAttrs: false,
@@ -41,17 +50,17 @@ export const ReuseTemplate = defineComponent({
       default: 'default',
     },
   },
-  setup(props, { attrs }) {
+  setup(props, { attrs, slots }) {
     const reg = getTemplateRegistry()
     return () => {
       // get the render function from DefineTemplate
       const render = reg.get(props.name)
       if (!render && process.env.NODE_ENV !== 'production')
         throw new Error(`[vue-reuse-template] Reusable template "${props.name}" is not defined, have you used <DefineTemplate name="${props.name}">?`)
-      return renderSlot({ default: render }, 'default', attrs)
+      return renderSlot({ default: render }, 'default', { ...attrs, $slots: slots })
     }
   },
-})
+}) as ReuseTemplateComponent<{ name?: string }, Record<string, Slot | undefined>>
 
 /**
  * This function creates `define` and `reuse` components in pair,
@@ -59,7 +68,10 @@ export const ReuseTemplate = defineComponent({
  *
  * It also allow to pass a generic to bind with type.
  */
-export function createReusableTemplate<T extends object>() {
+export function createReusableTemplate<
+  Bindings extends object,
+  Slots extends Record<string, Slot | undefined> = Record<string, Slot | undefined>,
+>() {
   // eslint-disable-next-line symbol-description
   const key = Symbol()
 
@@ -68,20 +80,20 @@ export function createReusableTemplate<T extends object>() {
     return () => {
       reg.set(key, slots.default)
     }
-  }) as DefineTemplateComponent<T>
+  }) as DefineTemplateComponent<Bindings, Slots>
 
   const reuse = defineComponent({
     inheritAttrs: false,
-    setup(_, { attrs }) {
+    setup(_, { attrs, slots }) {
       const reg = getTemplateRegistry()
       return () => {
         const render = reg.get(key)
         if (!render && process.env.NODE_ENV !== 'production')
           throw new Error('[vue-reuse-template] Reusable template is not defined')
-        return renderSlot({ default: render }, 'default', attrs)
+        return renderSlot({ default: render }, 'default', { ...attrs, $slots: slots })
       }
     },
-  }) as ReuseTemplateComponent<T>
+  }) as ReuseTemplateComponent<Bindings, Slots>
 
   return makeDestructurable(
     { define, reuse },

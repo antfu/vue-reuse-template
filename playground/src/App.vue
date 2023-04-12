@@ -6,6 +6,7 @@ const greeting = ref('Hello')
 
 const [DefineFoo, ReuseFoo] = createReusableTemplate<{ msg: string }>()
 const TemplateBar = createReusableTemplate<{ msg: string }>()
+const [DefineBiz, ReuseBiz] = createReusableTemplate<{ msg: string }>()
 </script>
 
 <template>
@@ -16,11 +17,11 @@ const TemplateBar = createReusableTemplate<{ msg: string }>()
   <ReuseTemplate name="test" data="world" />
   <ReuseTemplate name="test" :data="1 + 1" />
 
-  <!-- basic 2 -->
-  <DefineTemplate v-slot="{ data }" name="test2">
+  <!-- no name -->
+  <DefineTemplate v-slot="{ data }">
     <div>Test2: {{ greeting }} {{ data.toString().toUpperCase(0) }}</div>
   </DefineTemplate>
-  <ReuseTemplate name="test2" data="Vue!" />
+  <ReuseTemplate data="Vue!" />
 
   <!-- createReusableTemplate with array -->
   <DefineFoo v-slot="{ msg }">
@@ -33,6 +34,18 @@ const TemplateBar = createReusableTemplate<{ msg: string }>()
     <div>Bar: {{ msg }}</div>
   </TemplateBar.define>
   <TemplateBar.reuse msg="world" />
+
+  <!-- Slots -->
+  <DefineBiz v-slot="{ msg, $slots }">
+    <div>Biz: {{ msg }}</div>
+    <component :is="$slots.default" />
+  </DefineBiz>
+  <ReuseBiz msg="reuse 1">
+    <div>This is a slot from Reuse</div>
+  </ReuseBiz>
+  <ReuseBiz msg="reuse 2">
+    <div>This is another one</div>
+  </ReuseBiz>
 
   <button @click="greeting = greeting === 'Hi' ? 'Hello' : 'Hi'">
     Toggle Greeting
