@@ -39,24 +39,51 @@ import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
 </script>
 
 <template>
-  <DefineTemplate name="some-key">
+  <DefineTemplate>
     <!-- something complex -->
   </DefineTemplate>
 
   <dialog v-if="showInDialog">
-    <ReuseTemplate name="some-key" />
+    <ReuseTemplate />
   </dialog>
   <div v-else>
-    <ReuseTemplate name="some-key" />
+    <ReuseTemplate />
   </div>
 </template>
 ```
 
 - `<DefineTemplate>` will register the template and renders nothing.
-- `<ReuseTemplate>` will render the template provided by `<DefineTemplate>` with the same `name`.
+- `<ReuseTemplate>` will render the template provided by `<DefineTemplate>`.
 - `<DefineTemplate>` must be used before `<ReuseTemplate>`.
 
 > **Note**: It's recommanded to extract as separate components whenever possible. Abusing this library might lead to bad practices for your codebase.
+
+### Multiple Templates
+
+You can assign a `name` prop to the `<DefineTemplate>` and `<ReuseTemplate>` to have multiple templates, and reuse them by name:
+
+```html
+<script setup>
+import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
+</script>
+
+<template>
+  <DefineTemplate name="foo">
+    Foo
+  </DefineTemplate>
+  <DefineTemplate name="bar">
+    Bar
+  </DefineTemplate>
+
+  <!-- Bar -->
+  <ReuseTemplate name="bar" /> 
+
+  <!-- Foo -->
+  <ReuseTemplate name="foo" /> 
+</template>
+```
+
+By default, the `name` is set to `default`.
 
 ### Passing Data
 

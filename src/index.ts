@@ -21,7 +21,7 @@ export const DefineTemplate = defineComponent({
   props: {
     name: {
       type: String,
-      required: true,
+      default: 'default',
     },
   },
   setup(props, { slots }) {
@@ -38,7 +38,7 @@ export const ReuseTemplate = defineComponent({
   props: {
     name: {
       type: String,
-      required: true,
+      default: 'default',
     },
   },
   setup(props, { attrs }) {
