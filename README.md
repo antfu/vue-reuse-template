@@ -4,6 +4,12 @@
 
 Define and use Vue template inside the component scope.
 
+## Install
+
+```bash
+pnpm i vue-reuse-template
+```
+
 ## Motivation
 
 It's common to have the need to reuse some part of the template in Vue. For example:
