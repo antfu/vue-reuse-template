@@ -2,7 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/vue-reuse-template?color=a1b858&label=)](https://www.npmjs.com/package/vue-reuse-template)
 
-Define and use Vue template inside the component scope.
+Define and reuse Vue template inside the component scope.
 
 ## Install
 
@@ -25,7 +25,7 @@ It's common to have the need to reuse some part of the template in Vue. For exam
 </template>
 ```
 
-We'd like to reuse as much as possible. So normally we might need to extract those duplicated parts into a component. However, in components you lose the ability to access the local bindinge, defining props and emits for them can be tedious.
+We'd like to reuse our code as much as possible. So normally we might need to extract those duplicated parts into a component. However, in a seperated component you lose the ability to access the local bindings. Defining props and emits for them can be tedious sometime.
 
 So this library provides a way to define and use templates inside the component scope.
 
