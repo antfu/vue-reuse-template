@@ -9,29 +9,32 @@ const TemplateBar = createReusableTemplate<{ msg: string }>()
 </script>
 
 <template>
+  <!-- basic 1 -->
   <DefineTemplate v-slot="{ data }" name="test">
     <div>Test1: {{ greeting }} {{ data.toString().toUpperCase(0) }}</div>
   </DefineTemplate>
+  <ReuseTemplate name="test" data="world" />
+  <ReuseTemplate name="test" :data="1 + 1" />
 
+  <!-- basic 2 -->
   <DefineTemplate v-slot="{ data }" name="test2">
     <div>Test2: {{ greeting }} {{ data.toString().toUpperCase(0) }}</div>
   </DefineTemplate>
-
-  <ReuseTemplate name="test" data="world" />
-  <ReuseTemplate name="test" :data="1 + 1" />
   <ReuseTemplate name="test2" data="Vue!" />
 
+  <!-- createReusableTemplate with array -->
   <DefineFoo v-slot="{ msg }">
-    <div>Foo: {{ greeting }} {{ msg }}</div>
+    <div>Foo: {{ msg }}</div>
   </DefineFoo>
   <ReuseFoo msg="world" />
 
+  <!-- createReusableTemplate dot notation -->
   <TemplateBar.define v-slot="{ msg }">
-    <div>Bar: {{ greeting }} {{ msg }}</div>
+    <div>Bar: {{ msg }}</div>
   </TemplateBar.define>
   <TemplateBar.reuse msg="world" />
 
   <button @click="greeting = greeting === 'Hi' ? 'Hello' : 'Hi'">
-    Change greeting
+    Toggle Greeting
   </button>
 </template>

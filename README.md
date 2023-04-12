@@ -53,7 +53,8 @@ import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
 ```
 
 - `<DefineTemplate>` will register the template and renders nothing.
-- `<ReuseTemplate>` will render the template provided by `<DefineTemplate>` with the same name.
+- `<ReuseTemplate>` will render the template provided by `<DefineTemplate>` with the same `name`.
+- `<DefineTemplate>` must be used before `<ReuseTemplate>`.
 
 > **Note**: It's recommanded to extract as separate components whenever possible. Abusing this library might lead to bad practices for your codebase.
 
@@ -70,17 +71,12 @@ import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
 </script>
 
 <template>
-  <DefineTemplate name="some-key" v-slot="{ data, msg, anything }">
-    <!-- something complex -->
+  <DefineTemplate name="foo" v-slot="{ data, msg, anything }">
     <div>{{ data }} passed from usage</div>
   </DefineTemplate>
 
-  <dialog v-if="showInDialog">
-    <ReuseTemplate name="some-key" :data="data" msg="I am in a dialog" />
-  </dialog>
-  <div v-else>
-    <ReuseTemplate name="some-key" :data="anotherData" msg="I am inline!" />
-  </div>
+  <ReuseTemplate name="foo" :data="data" msg="The first usage" />
+  <ReuseTemplate name="foo" :data="anotherData" msg="The second usage" />
 </template>
 ```
 
@@ -95,7 +91,7 @@ import { createReusableTemplate } from 'vue-reuse-template'
 // Comes with pair of `DefineTemplate` and `ReuseTemplate`
 const [DefineFoo, ReuseFoo] = createReusableTemplate<{ msg: string }>()
 
-// You can create multiple reusable templates
+// You can create multiple reusable templates, a unique `name` will be assigned automatically
 const [DefineBar, ReuseBar] = createReusableTemplate<{ items: string[] }>()
 </script>
 
