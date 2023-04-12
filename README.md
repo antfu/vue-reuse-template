@@ -7,7 +7,7 @@ Define and reuse Vue template inside the component scope.
 ## Install
 
 ```bash
-pnpm i vue-reuse-template
+npm i vue-reuse-template
 ```
 
 ## Motivation
@@ -27,7 +27,7 @@ It's common to have the need to reuse some part of the template in Vue. For exam
 
 We'd like to reuse our code as much as possible. So normally we might need to extract those duplicated parts into a component. However, in a seperated component you lose the ability to access the local bindings. Defining props and emits for them can be tedious sometime.
 
-So this library provides a way to define and use templates inside the component scope.
+So this library is made to provide a way for defining and reusing templates inside the component scope.
 
 ## Usage
 
@@ -53,7 +53,9 @@ import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
 ```
 
 - `<DefineTemplate>` will register the template and renders nothing.
-- `<ReuseTemplate>` will render the template provided by `DefineTemplate` with the same name.
+- `<ReuseTemplate>` will render the template provided by `<DefineTemplate>` with the same name.
+
+> **Note**: It's recommanded to extract as separate components whenever possible. Abusing this library might lead to bad practices for your codebase.
 
 ### Passing Data
 
@@ -87,7 +89,7 @@ import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
 You can use `createReusableTemplate` to create a reusable template with type support:
 
 ```html
-<script setup>
+<script setup lang="ts">
 import { createReusableTemplate } from 'vue-reuse-template'
 
 // Comes with pair of `DefineTemplate` and `ReuseTemplate`
@@ -114,7 +116,7 @@ const [DefineBar, ReuseBar] = createReusableTemplate<{ items: string[] }>()
 Optionally, if you are not a fan of array destructuring, the following usage is also legal:
 
 ```html
-<script setup>
+<script setup lang="ts">
 import { createReusableTemplate } from 'vue-reuse-template'
 
 const TemplateFoo = createReusableTemplate<{ msg: string }>()
