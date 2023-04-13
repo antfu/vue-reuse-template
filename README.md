@@ -35,7 +35,9 @@ In the previous example, we could refactor it to:
 
 ```html
 <script setup>
-import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
+import { createReusableTemplate } from 'vue-reuse-template'
+
+const [DefineTemplate, ReuseTemplate] = createReusableTemplate()
 </script>
 
 <template>
@@ -58,33 +60,6 @@ import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
 
 > **Note**: It's recommanded to extract as separate components whenever possible. Abusing this library might lead to bad practices for your codebase.
 
-### Multiple Templates
-
-You can assign a `name` prop to the `<DefineTemplate>` and `<ReuseTemplate>` to have multiple templates, and reuse them by name:
-
-```html
-<script setup>
-import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
-</script>
-
-<template>
-  <DefineTemplate name="foo">
-    Foo
-  </DefineTemplate>
-  <DefineTemplate name="bar">
-    Bar
-  </DefineTemplate>
-
-  <!-- Bar -->
-  <ReuseTemplate name="bar" /> 
-
-  <!-- Foo -->
-  <ReuseTemplate name="foo" /> 
-</template>
-```
-
-By default, the `name` is set to `default`.
-
 ### Passing Data
 
 You can also pass data to the template using slots:
@@ -94,23 +69,25 @@ You can also pass data to the template using slots:
 
 ```html
 <script setup>
-import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
+import { createReusableTemplate} from 'vue-reuse-template'
+
+const [DefineTemplate, ReuseTemplate] = createReusableTemplate()
 </script>
 
 <template>
-  <DefineTemplate name="foo" v-slot="{ data, msg, anything }">
+  <DefineTemplate v-slot="{ data, msg, anything }">
     <div>{{ data }} passed from usage</div>
   </DefineTemplate>
 
-  <ReuseTemplate name="foo" :data="data" msg="The first usage" />
-  <ReuseTemplate name="foo" :data="anotherData" msg="The second usage" />
-  <ReuseTemplate name="foo" v-bind="{ data: something, msg: 'The third' }" />
+  <ReuseTemplate :data="data" msg="The first usage" />
+  <ReuseTemplate :data="anotherData" msg="The second usage" />
+  <ReuseTemplate v-bind="{ data: something, msg: 'The third' }" />
 </template>
 ```
 
 ### TypeScript Support
 
-You can use `createReusableTemplate` to create a reusable template with type support:
+`createReusableTemplate` accepts a generic type to provide type support for the data passed to the template:
 
 ```html
 <script setup lang="ts">
@@ -163,7 +140,9 @@ It's also possible to pass slots back from `<ReuseTemplate>`. You can access the
 
 ```html
 <script setup>
-import { DefineTemplate, ReuseTemplate } from 'vue-reuse-template'
+import { createReusableTemplate } from 'vue-reuse-template'
+
+const [DefineTemplate, ReuseTemplate] = createReusableTemplate()
 </script>
 
 <template>

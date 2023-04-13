@@ -1,5 +1,5 @@
-import type { ComponentInternalInstance, DefineComponent, Slot } from 'vue'
-import { defineComponent, getCurrentInstance, renderSlot } from 'vue'
+import type { DefineComponent, Slot } from 'vue'
+import { defineComponent, renderSlot } from 'vue'
 
 export type DefineTemplateComponent<
  Bindings extends object,
@@ -16,69 +16,6 @@ export type ReuseTemplateComponent<
   new(): { $slots: Slots }
 }
 
-const _map = /* @__PURE__ */ new WeakMap<ComponentInternalInstance, Map<string | symbol, Slot | undefined>>()
-function getTemplateRegistry() {
-  // store the render registry with a WeakMap
-  // bound to the parent component instance (the one that uses the template)
-  const instance = getCurrentInstance()!.parent!
-  if (!_map.has(instance))
-    _map.set(instance, new Map())
-  return _map.get(instance)!
-}
-
-/**
- * Define a reusable template, renders nothing
- */
-export const DefineTemplate = /* @__PURE__ */ defineComponent({
-  props: {
-    name: {
-      type: String,
-      default: 'default',
-    },
-  },
-  setup(props, { slots }) {
-    const reg = getTemplateRegistry()
-    return () => {
-      // register the render function
-      reg.set(props.name, slots.default)
-    }
-  },
-}) as DefineTemplateComponent<any, Record<string, Slot | undefined>, { name?: string }>
-
-/**
- * Reuse a template defined by `DefineTemplate`
- */
-export const ReuseTemplate = /* @__PURE__ */ defineComponent({
-  inheritAttrs: false,
-  props: {
-    name: {
-      type: String,
-      default: 'default',
-    },
-  },
-  setup(props, { attrs, slots }) {
-    const reg = getTemplateRegistry()
-    return () => {
-      // get the render function from DefineTemplate
-      const render = reg.get(props.name)
-      if (!render && process.env.NODE_ENV !== 'production')
-        throw new Error(`[vue-reuse-template] Reusable template "${props.name}" is not defined, have you used <DefineTemplate name="${props.name}">?`)
-      return renderSlot({ default: render }, 'default', { ...attrs, $slots: slots })
-    }
-  },
-}) as ReuseTemplateComponent<{ name?: string }, Record<string, Slot | undefined>>
-
-export {
-  /**
-   * Alias for `DefineTemplate`
-   */
-  DefineTemplate as TemplateDefine,
-  /**
-   * Alias for `ReuseTemplate`
-   */
-  ReuseTemplate as TemplateReuse,
-}
-
 /**
  * This function creates `define` and `reuse` components in pair,
  * that you don't need to specify the name for each.
@@ -88,25 +25,21 @@ export {
 export function createReusableTemplate<
   Bindings extends object,
   Slots extends Record<string, Slot | undefined> = Record<string, Slot | undefined>,
->() {
-  // eslint-disable-next-line symbol-description
-  const key = Symbol()
+>(name?: string) {
+  let render: Slot | undefined
 
   const define = defineComponent((_, { slots }) => {
-    const reg = getTemplateRegistry()
     return () => {
-      reg.set(key, slots.default)
+      render = slots.default
     }
   }) as DefineTemplateComponent<Bindings, Slots>
 
   const reuse = defineComponent({
     inheritAttrs: false,
     setup(_, { attrs, slots }) {
-      const reg = getTemplateRegistry()
       return () => {
-        const render = reg.get(key)
         if (!render && process.env.NODE_ENV !== 'production')
-          throw new Error('[vue-reuse-template] Reusable template is not defined')
+          throw new Error(`[vue-reuse-template] Failed to find the definition of template${name ? ` "${name}"` : ''}`)
         return renderSlot({ default: render }, 'default', { ...attrs, $slots: slots })
       }
     },
