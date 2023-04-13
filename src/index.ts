@@ -1,5 +1,5 @@
 import type { DefineComponent, Slot } from 'vue'
-import { defineComponent, renderSlot } from 'vue'
+import { defineComponent } from 'vue'
 
 export type DefineTemplateComponent<
  Bindings extends object,
@@ -40,7 +40,7 @@ export function createReusableTemplate<
       return () => {
         if (!render && process.env.NODE_ENV !== 'production')
           throw new Error(`[vue-reuse-template] Failed to find the definition of template${name ? ` "${name}"` : ''}`)
-        return renderSlot({ default: render }, 'default', { ...attrs, $slots: slots })
+        return render?.({ ...attrs, $slots: slots })
       }
     },
   }) as ReuseTemplateComponent<Bindings, Slots>
