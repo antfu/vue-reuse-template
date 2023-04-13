@@ -16,7 +16,7 @@ export type ReuseTemplateComponent<
   new(): { $slots: Slots }
 }
 
-const _map = new WeakMap<ComponentInternalInstance, Map<string | symbol, Slot | undefined>>()
+const _map = /* @__PURE__ */ new WeakMap<ComponentInternalInstance, Map<string | symbol, Slot | undefined>>()
 function getTemplateRegistry() {
   // store the render registry with a WeakMap
   // bound to the parent component instance (the one that uses the template)
@@ -26,7 +26,7 @@ function getTemplateRegistry() {
   return _map.get(instance)!
 }
 
-export const DefineTemplate = defineComponent({
+export const DefineTemplate = /* @__PURE__ */ defineComponent({
   props: {
     name: {
       type: String,
@@ -42,7 +42,7 @@ export const DefineTemplate = defineComponent({
   },
 }) as DefineTemplateComponent<any, Record<string, Slot | undefined>, { name?: string }>
 
-export const ReuseTemplate = defineComponent({
+export const ReuseTemplate = /* @__PURE__ */ defineComponent({
   inheritAttrs: false,
   props: {
     name: {
