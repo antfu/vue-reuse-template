@@ -96,12 +96,11 @@ import { createReusableTemplate } from 'vue-reuse-template'
 // Comes with pair of `DefineTemplate` and `ReuseTemplate`
 const [DefineFoo, ReuseFoo] = createReusableTemplate<{ msg: string }>()
 
-// You can create multiple reusable templates, a unique `name` will be assigned automatically
+// You can create multiple reusable templates
 const [DefineBar, ReuseBar] = createReusableTemplate<{ items: string[] }>()
 </script>
 
 <template>
-  <!-- With `createReusableTemplate` you don't need to set `name` -->
   <DefineFoo v-slot="{ msg }">
     <!-- `msg` is typed as `string` -->
     <div>Hello {{ msg.toUpperCase() }}</div>
@@ -124,7 +123,6 @@ const TemplateFoo = createReusableTemplate<{ msg: string }>()
 </script>
 
 <template>
-  <!-- With `createReusableTemplate` you don't need to set `name` -->
   <TemplateFoo.define v-slot="{ msg }">
     <!-- `msg` is typed as `string` -->
     <div>Hello {{ msg.toUpperCase() }}</div>
