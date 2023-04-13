@@ -26,6 +26,9 @@ function getTemplateRegistry() {
   return _map.get(instance)!
 }
 
+/**
+ * Define a reusable template, renders nothing
+ */
 export const DefineTemplate = /* @__PURE__ */ defineComponent({
   props: {
     name: {
@@ -42,6 +45,9 @@ export const DefineTemplate = /* @__PURE__ */ defineComponent({
   },
 }) as DefineTemplateComponent<any, Record<string, Slot | undefined>, { name?: string }>
 
+/**
+ * Reuse a template defined by `DefineTemplate`
+ */
 export const ReuseTemplate = /* @__PURE__ */ defineComponent({
   inheritAttrs: false,
   props: {
@@ -61,6 +67,17 @@ export const ReuseTemplate = /* @__PURE__ */ defineComponent({
     }
   },
 }) as ReuseTemplateComponent<{ name?: string }, Record<string, Slot | undefined>>
+
+export {
+  /**
+   * Alias for `DefineTemplate`
+   */
+  DefineTemplate as TemplateDefine,
+  /**
+   * Alias for `ReuseTemplate`
+   */
+  ReuseTemplate as TemplateReuse,
+}
 
 /**
  * This function creates `define` and `reuse` components in pair,
