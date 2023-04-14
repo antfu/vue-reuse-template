@@ -1,5 +1,10 @@
 # vue-reuse-template
 
+**This package is now part of VueUse v10**. Learn more at https://vueuse.org/createReusableTemplate
+
+<details>
+  <summary>Legacy README</summary>
+
 [![NPM version](https://img.shields.io/npm/v/vue-reuse-template?color=a1b858&label=)](https://www.npmjs.com/package/vue-reuse-template)
 
 Define and reuse Vue template inside the component scope.
@@ -174,6 +179,8 @@ Existing Solutions:
 
 - [Vue Macros - `namedTemplate`](https://vue-macros.sxzz.moe/features/named-template.html)
 - [`unplugin-vue-reuse-template`](https://github.com/liulinboyi/unplugin-vue-reuse-template)
+
+</details>
 
 ## Sponsors
 
