@@ -1,5 +1,8 @@
 **🚛 This package is now part of VueUse v10**.
+
 👉 Refer to https://vueuse.org/createReusableTemplate instead.
+
+----
 
 <details>
   <summary>Legacy README</summary>
