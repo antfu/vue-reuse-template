@@ -1,9 +1,10 @@
-# vue-reuse-template
-
-**This package is now part of VueUse v10**. Learn more at https://vueuse.org/createReusableTemplate
+**🚛 This package is now part of VueUse v10**.
+👉 Refer to https://vueuse.org/createReusableTemplate instead.
 
 <details>
   <summary>Legacy README</summary>
+
+# vue-reuse-template
 
 [![NPM version](https://img.shields.io/npm/v/vue-reuse-template?color=a1b858&label=)](https://www.npmjs.com/package/vue-reuse-template)
 
